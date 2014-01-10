@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<result>
-<title>招生就业</title>
-<department>
-<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/zhaofen/ShowClass.asp?ClassID=44">合作企业</a>
-<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/zhaofen/ShowClass.asp?ClassID=40">就业升学</a>
-<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/zhaofen/ShowClass.asp?ClassID=39">招生动态</a>
-</department>
-</result>

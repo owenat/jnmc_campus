@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<result>
-<title>教务教学</title>
-<department>
-<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/jiaowu/ShowClass.asp?ClassID=53">教学资料</a>
-<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/jiaowu/ShowClass.asp?ClassID=52">教学管理</a>
-</department>
-</result>
