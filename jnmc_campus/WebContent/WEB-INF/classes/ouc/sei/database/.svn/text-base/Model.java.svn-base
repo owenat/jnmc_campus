@@ -1,0 +1,53 @@
+package ouc.sei.database;
+
+public class Model {
+
+	/**
+	 * 字段与数据库中的字段对应
+	 */
+	private String web;
+	private String content;
+	private String time;
+	/**
+	 * 无参构造函数
+	 */
+	public Model()
+	{
+		super();
+	}
+	/**
+	 * 有参构造函数
+	 * @param web
+	 * @param content
+	 * @param time
+	 */
+	public Model(String web, String content, String time)
+	{
+		this.web = web;
+		this.content = content;
+		this.time = time;
+	}
+	
+	/**
+	 * 参数的get和set函数
+	 */
+	public String getWeb() {
+		return web;
+	}
+	public void setWeb(String web) {
+		this.web = web;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
+	}
+	
+}

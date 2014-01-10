@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>
+	jnmc</display-name>
+	<filter>
+		<description>
+		</description>
+		<display-name>Controller</display-name>
+		<filter-name>Controller</filter-name>
+		<filter-class>ouc.sei.filters.Controller</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>Controller</filter-name>
+		<url-pattern>/show.jsp</url-pattern>
+	</filter-mapping>
+	<servlet>
+		<description>
+		</description>
+		<display-name>StartUp</display-name>
+		<servlet-name>StartUp</servlet-name>
+		<servlet-class>ouc.sei.Servlet.StartUp</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>StartUp</servlet-name>
+		<url-pattern>/StartUp</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>show.jsp</welcome-file>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+<!-- 400错误 -->  
+<error-page>  
+<error-code>400</error-code>  
+<location>/error.jsp</location>  
+</error-page>  
+<!-- 404 页面不存在错误 -->  
+<error-page>  
+<error-code>404</error-code>  
+<location>/error.jsp</location>  
+</error-page>  
+<!-- 500 服务器内部错误 -->  
+<error-page>  
+<error-code>500</error-code>  
+<location>/error.jsp</location>  
+</error-page>  
+</web-app>

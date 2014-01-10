@@ -1,0 +1,97 @@
+/**
+ * @author Yang zhilong
+ * @function 本类主要用在show.jsp页面上，用于对以真正post形式提交的表单和以get转换成的post形式提交的表单
+ * 进行处理。注意，当源码当中的form表单是以post形式提交时，无需做任何修改，但是当源码当中的form表单以get形式（此处成为“伪装post”形式）
+ * 提交时，应当进行如下修改
+ * 将<form action="<%=request.getContextPath()%>/test.do" method="get">转换为
+ * <form action="<%=request.getContextPath()%>/test.do" method="post">
+ * <input type="hidden" name="formMethod" value="get" />
+ *
+ */
+
+package ouc.sei.operate;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import ouc.sei.browser.Browser;
+
+
+public class PostMethodOper {
+
+	private Map<String, String[]> map = null;
+	private String webUrl = null;
+	private Browser browser = null;
+	private String formMethod = null;
+
+	public PostMethodOper(Map<String, String[]> map, 
+			String webUrl, Browser browser, String formMethod) {
+		this.map = map;//当真正是post形式时，将post的参数传递进来
+		this.webUrl = webUrl;//要访问的URL，当以post形式传参时，次url不用更改，当以伪装post形式传递时要更改，具体见postMehtodOper()
+		this.browser = browser;
+		this.formMethod = formMethod;//这个参数在post形式时不用，只在伪装post形势时使用
+	}
+
+	public String getWebUrl() {
+		return webUrl;
+	}
+
+	/**
+	 * @function 对整个传参过程进行处理 
+	 */
+	public void postMehtodOper() {
+		System.out.println("==============Enter PostMethod=================");
+			StringBuilder sb = new StringBuilder();
+			if ("get".equalsIgnoreCase(formMethod)) {//判断是否是伪装post形式
+				Set<String> key = map.keySet();//获得其中的参数，并对参数进行从新组成带参数的新请求链接
+				for (Iterator<String> it = key.iterator(); it.hasNext();) {
+					String str1 = it.next();
+					if (!"formMethod".equalsIgnoreCase(str1)
+							&& !str1.contains("webUrl")) {
+						for (String str : map.get(str1)) {
+							try {
+								str = URLEncoder.encode(str, "utf-8");//一定要以UTF-8形式，因为部分网站部支持直接以中文请求
+							} catch (UnsupportedEncodingException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							sb.append(str1);
+							sb.append("=");
+							sb.append(str);
+							sb.append("&");
+							System.out.println(str1 + "=" + str);
+						}
+					}
+				}
+				sb.deleteCharAt(sb.toString().lastIndexOf("&"));
+				System.out
+						.println("======The webUrl1 in fake PostMethod of show.jsp======"
+								+ webUrl);
+				webUrl = webUrl + "?" + sb.toString();//新的请求链接
+				System.out
+						.println("======The webUrl2 in fake PostMethod of show.jsp======"
+								+ webUrl);
+			} else {//当以真正的post形式请求时
+				System.out.println("Real Post");
+				Map<String, String[]> postMap = new HashMap<String, String[]>();
+				Set<String> key = map.keySet();
+				for (Iterator<String> it = key.iterator(); it.hasNext();) {
+					String str1 = it.next();
+					if (!"formMethod".equalsIgnoreCase(str1)
+							&& !str1.contains("webUrl")) {
+						String[] str = map.get(str1);
+						postMap.put(str1, str);//将请求的参数封装到map当中以提交到Httpclient的post请求当中
+					}
+				}
+				browser.setPostOrGet(true);//将请求设置为post
+				browser.setMap(postMap);//设置参数
+			}
+		
+		System.out.println("==============Out PostMethod=====================");
+	}
+
+}

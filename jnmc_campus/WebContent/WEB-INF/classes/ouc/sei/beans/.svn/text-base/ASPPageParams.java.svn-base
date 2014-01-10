@@ -1,0 +1,15 @@
+package ouc.sei.beans;
+/**
+ * 存储cookie信息参数
+ * @author LF
+ *
+ */
+public class ASPPageParams {
+	private String __VIEWSTATE=null;
+	public void set__VIEWSTATE(String __VIEWSTATE) {
+		this.__VIEWSTATE = __VIEWSTATE;
+	}
+	public String get__VIEWSTATE() {
+		return __VIEWSTATE;
+	}
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<result>
+<!-- 基础学院 -->
+	<rule>
+		<rootUrlRegex>^http://210.44.16.109/.*$</rootUrlRegex>
+		<regex>^.*[tongzhigonggao,gongzuotongzhi].*$</regex>
+		<addStr>http://210.44.16.109/</addStr>
+	</rule>
+<!-- 精神卫生学院 -->
+	<rule>
+		<rootUrlRegex>^http://210.44.16.40/.*$</rootUrlRegex>
+		<regex>^.*[xinwendongtai,jiaoyujiaoxu].*$</regex>
+		<addStr>http://210.44.16.40/</addStr>
+	</rule>
+	<defaultRule>
+		<addStr>http://www.jnmc.edu.cn/</addStr>
+	</defaultRule>
+</result>

@@ -1,0 +1,23 @@
+package ouc.sei.beans;
+
+public class RedirectBean {
+	private String regex=null;
+	private String redirectUrl=null;
+	public RedirectBean(){}
+	public RedirectBean(String regex,String url){
+		this.regex=regex;
+		this.redirectUrl=url;
+	}
+	public String getRegex() {
+		return regex;
+	}
+	public void setRegex(String regex) {
+		this.regex = regex;
+	}
+	public String getRedirectUrl() {
+		return redirectUrl;
+	}
+	public void setRedirectUrl(String redirectUrl) {
+		this.redirectUrl = redirectUrl;
+	}
+}

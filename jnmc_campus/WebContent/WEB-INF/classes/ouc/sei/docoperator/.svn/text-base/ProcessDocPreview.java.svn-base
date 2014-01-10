@@ -1,0 +1,68 @@
+/**
+ * @author Yang zhilong
+ * @function 对整个附件预览功能的每个实现类的综合调用。以实现一个完整的附件预览的功能。
+ * @date 2011-11-05
+ * 
+ */
+package ouc.sei.docoperator;
+
+import ouc.sei.common.Constant;
+
+public class ProcessDocPreview {
+
+	private String webUrl = null;//要访问的远程URL地址
+	private String docSavePath = null ;//文件要下载的地址
+	
+	private GetFileName getFileName = null;//处理文件名称类
+	private DocNametoHash hash = null;//将文件名称放入内存类
+	private DownloadFile download = null;//下载文件类
+
+
+	public ProcessDocPreview(String webUrl) {
+		docSavePath = Constant.documentsSavePath;
+		this.webUrl = webUrl;
+	}
+	
+	/**
+	 * @function 附件预览的整个处理过程。先将office文件转换为pdf文件，再讲pdf文件转换为png文件，然后建立不同的html页面，以显示png文件
+	 * 文件目录存放格式：
+	 *		|
+	 *		|--documents文件夹(存放下载下来的office文件，pdf文件，以及office文件转换后的pdf文件)
+	 *	  		  |
+	 * 			  |--以转换文件的文件名为名称的文件夹(存放转换后的png文件，以及对应的静态网页)
+	 * 
+	 */
+
+	public void processFiles() {
+		hash = new DocNametoHash();
+		getFileName = new GetFileName(webUrl);
+		String fileName = getFileName.getOldFileNameNoPer();
+		String fileNameBeforeType = getFileName.getOldFileNameNoPerWithoutType();
+		String fileType = getFileName.getFileType();
+		if (!hash.hashContainsFile(fileName)) {//首先判断这个文件是否在内存链当中，如果不在则下载
+			download = new DownloadFile(webUrl,docSavePath);//下载这个文件
+			download.saveToFile2();
+			
+			if (!"pdf".equalsIgnoreCase(fileType)) {//如果这个文件不是pdf文件，那么先将其转换为pdf文件
+				String docSourcePath = docSavePath + fileName;
+				String docTargetPath = docSavePath + fileNameBeforeType
+						+ ".pdf";//转换为pdf文件与源文件在同一目录下，同时文件名与原文件名相同
+				DocToPdf.getOpenOfficeUtilInstance().documets2Pdf(docSourcePath, docTargetPath);
+			}
+			String pdfSourcePath = docSavePath;
+			String pdfTargetPath = docSavePath+fileNameBeforeType+"\\";//png文件的存放目录在以文件名为名称的文件夹下
+			String pdffileName = fileNameBeforeType+".pdf";
+			PdfToImage.getInstance().pdf2Image(pdfSourcePath, pdfTargetPath, pdffileName);
+			
+			int n = PdfToImage.getInstance().getPageNum();//计算总共有几张png文件，用以生成相同页数的静态网页
+			ImageToHtml.getPdfBoxUtilInstance().image2html(n, fileNameBeforeType, pdfTargetPath);//生成静态网页，以显示png文件
+			hash.downloadFiletoHash(fileName);//将下载转换后的文件放入内存链中。
+		}
+	}
+	
+	public static void main(String[] args){
+		String url = "http://www.qdedu.gov.cn/qdedu//temp/ca18a74c-34e2-47ad-b4fd-146ad7668aa6/%9752%6559%901A%5B57%FF3B2011%FF3D068%53F7%9644%4EF6.xls";
+		ProcessDocPreview doc = new ProcessDocPreview(url);
+		doc.processFiles();
+	}
+}

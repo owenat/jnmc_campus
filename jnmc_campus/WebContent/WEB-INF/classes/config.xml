@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<result>
+<!-- 首页-->
+<!-- 首页新闻列表 -->
+	<rule>
+		<urlRegex>^.*.jnmc.edu.cn/$</urlRegex>
+		<xmlTem>doc/indexXml.xsl</xmlTem>
+		<showTem>style/indexJsp.xsl</showTem>
+	</rule>
+<!-- 学校概况-->
+	<rule>
+		<urlRegex>^.*zjjy/xxgk.*$</urlRegex>
+		<xmlTem>doc/GaiKuangXml.xsl</xmlTem>
+		<showTem>style/CommonJsp.xsl</showTem>
+	</rule>
+<!-- 济医动态  http://www.jnmc.edu.cn/jydt/jydt/List_82.html-->
+<!-- 新闻列表 -->
+	<rule>
+		<urlRegex>^.*jydt/jydt/$</urlRegex>
+		<xmlTem>jydt_ListXml.xsl</xmlTem>
+		<showTem>style/index_listJsp.xsl</showTem>
+	</rule>
+<!-- 正文内容 -->
+	<rule>
+		<urlRegex>^.*jydt/jydt/.*$</urlRegex>
+		<xmlTem>doc/GaiKuangXml.xsl</xmlTem>
+		<showTem>style/CommonJsp.xsl</showTem>
+	</rule>
+<!-- 校内通知   http://www.jnmc.edu.cn/xntz/xntz/-->
+<!-- 新闻列表 -->
+	<rule>
+		<urlRegex>^.*xntz/xntz/$</urlRegex>
+		<xmlTem>jydt_ListXml.xsl</xmlTem>
+		<showTem>style/index_listJsp.xsl</showTem>
+	</rule>
+<!-- 正文内容 -->
+	<rule>
+		<urlRegex>^.*xntz/xntz.*$</urlRegex>
+		<xmlTem>doc/GaiKuangXml.xsl</xmlTem>
+		<showTem>style/CommonJsp.xsl</showTem>
+	</rule>
+<!-- 学术信息  http://www.jnmc.edu.cn/xsxx/xsxx/-->
+<!-- 新闻列表 -->
+	<rule>
+		<urlRegex>^.*xsxx/xsxx/$</urlRegex>
+		<xmlTem>jydt_ListXml.xsl</xmlTem>
+		<showTem>style/index_listJsp.xsl</showTem>
+	</rule>
+<!-- 正文内容 -->
+	<rule>
+		<urlRegex>^.*xsxx/xsxx.*$</urlRegex>
+		<xmlTem>doc/GaiKuangXml.xsl</xmlTem>
+		<showTem>style/CommonJsp.xsl</showTem>
+	</rule>
+<!-- 基础学院  http://210.44.16.109-->
+<!-- 概况 -->
+	<rule>
+		<urlRegex>^.*210.44.16.109.*xueyuangaikuang.*$</urlRegex>
+		<xmlTem>doc/xy_jc_gkXml.xsl</xmlTem>
+		<showTem>style/xy_jc_gkJsp.xsl</showTem>
+	</rule>
+<!-- 新闻列表 -->
+	<rule>
+		<urlRegex>^.*210.44.16.109.*index.*$</urlRegex>
+		<xmlTem>doc/xy_jc_ListXml.xsl</xmlTem>
+		<showTem>style/index_listJsp.xsl</showTem>
+	</rule>
+<!-- 新闻正文 -->
+	<rule>
+		<urlRegex>^.*210.44.16.109.*$</urlRegex>
+		<xmlTem>doc/xy_jc_contentXml.xsl</xmlTem>
+		<showTem>style/CommonJsp.xsl</showTem>
+	</rule>
+<!-- 临床学院  http://210.44.16.137/-->
+<!-- 概况 -->
+	<rule>
+		<urlRegex>^.*210.44.16.137/show.asp.*$</urlRegex>
+		<xmlTem>doc/xy_lc_contentXml.xsl</xmlTem>
+		<showTem>style/xy_jc_gkJsp.xsl</showTem>
+	</rule>
+<!-- 新闻列表 -->
+	<rule>
+		<urlRegex>^.*http://210.44.16.137/type.asp.*$</urlRegex>
+		<xmlTem>doc/xy_lc_ListXml.xsl</xmlTem>
+		<showTem>style/CommonJsp.xsl</showTem>
+	</rule>
+<!-- 公共卫生学院 http://www.jnmc.edu.cn/jxbx/ggws/-->
+<!-- 新闻列表 -->
+	<rule>
+		<urlRegex>^.*jxbx/ggws.*Index.html$</urlRegex>
+		<xmlTem>doc/xy_ggws_ListXml.xsl</xmlTem>
+		<showTem>style/index_listJsp.xsl</showTem>
+	</rule>
+<!-- 新闻正文-->
+	<rule>
+		<urlRegex>^.*jxbx/ggws.*$</urlRegex>
+		<xmlTem>doc/xy_ggws_contentXml.xsl</xmlTem>
+		<showTem>style/CommonJsp.xsl</showTem>
+	</rule>
+	<!-- 精神卫生学院 http://210.44.16.40/-->
+	<!-- 新闻正文-->
+	<rule>
+		<urlRegex>^.*210.44.16.40.*html$</urlRegex>
+		<xmlTem>doc/xy_jsws_contentXml.xsl</xmlTem>
+		<showTem>style/CommonJsp.xsl</showTem>
+	</rule>
+  <!-- 新闻列表 -->
+	<rule>
+		<urlRegex>^.*210.44.16.40.*$</urlRegex>
+		<xmlTem>doc/xy_jsws_ListXml.xsl</xmlTem>
+		<showTem>style/index_listJsp.xsl</showTem>
+	</rule>
+
+
+
+
+	<defaultRule>
+		<xmlTem></xmlTem>
+		<showTem></showTem>
+	</defaultRule>
+</result>

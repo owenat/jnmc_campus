@@ -1,0 +1,251 @@
+/**
+ * @author Yang zhilong
+ * @function 主要实现对下载doc、xls、txt、pdf的名字字符串的处理，获得没有百分号的，获得utf-8形式的名字等等
+ * 			 在img标签下含有中文时，或者下载的doc、xls、txt、pdf文档含有中文时，jtidy会将其转换为utf-16be形式
+ *			而这种形式的url没法请求，因此建立这个类，主要处理这种编码，将其转换为远程可访问的编码。
+ * @date 2011-11-05
+ */
+package ouc.sei.docoperator;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
+public class GetFileName {
+	private String oldFilePath = null;//未修改过的远程URL
+	private String newFilePath = null;//修改为UTF-8形式的URL
+	private String oldFileName = null;//未修改过的文件名称
+	private String newFileName = null;//还原为中文的文件名称
+	private String pathBeforeFile = null;//文件名称之前的路径
+	private String newFilePath_utf8 = null;//文件名以utf-8形式编码的远程URL
+	private String fileType = null;//文件类型
+	private String newFileNameWithoutType = null;//不含文件类型的新文件名称
+	
+	//新建的文件，以不含百分号的久文件名称命名，同时转换来的html放在同名的文件夹下
+	private String oldFileNameNoPer = null;//不含百分号的久文件名
+	private String oldFileNameNoPerWithoutType = null;//不含百分号，同时不含文件类型的文件名称
+
+	/**
+	 * @function 构造函数。注意千万不要改变其中调用方法的顺序。
+	 * @param oldFilePath
+	 * 
+	 */
+	public GetFileName(String oldFilePath) {
+		this.oldFilePath = oldFilePath;
+		setOldFileName();
+		setPathBeforeFile();
+		setNewFilePath();
+		setNewFileName();
+		setNewFilePath_utf8();
+		setFileType();
+		setNewFileNameWithoutType();
+		setOldFileNameNoPer();
+		setOldFileNameNoPerWithoutType();
+
+	}
+	
+	/**
+	 * @function 获得就的文件名称
+	 * @return
+	 */
+
+	private String setOldFileName() {
+		if (oldFilePath != null && !"".equals(oldFilePath)) {//判断文件的远程路径不为空
+			String[] fileName = oldFilePath.split("/");
+			oldFileName = fileName[fileName.length - 1];
+			System.out.println("In GetFileName setOldFileName the oldFileName is "+ oldFileName);
+			return fileName[fileName.length - 1];
+		}
+		return null;
+	}
+	
+	/**
+	 * @function 获得文件名之前的路径
+	 * @return
+	 */
+
+	private String setPathBeforeFile() {
+		if (oldFilePath != null && !"".equals(oldFilePath)) {//判断文件的远程路径不为空
+			pathBeforeFile = oldFilePath.substring(0,
+					oldFilePath.lastIndexOf("/"));
+			return oldFilePath.substring(0, oldFilePath.lastIndexOf("/"));
+		}
+		return null;
+	}
+	
+	/**
+	 * @function 获得信的路径名
+	 * @return
+	 */
+
+	private String setNewFilePath() {
+		if (oldFilePath.matches(".*%\\w{4}%.*")) {//判断远程路径是否被jtidy转码问utf-16be形式
+			StringBuilder sb = new StringBuilder(oldFilePath);
+			for (int k = 0; k < sb.length(); k++) {
+				if (sb.charAt(k) == '%') {
+					k = k + 3;
+					sb.insert(k, "%");
+				}
+			}
+			try {
+				newFilePath = URLDecoder.decode(sb.toString(), "utf-16be");//将utf-16be形式的编码转换为原来的中文
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if (oldFilePath.matches(".*%[\\w]{2}%.*")) {//判断是否是utf-8编码
+
+			try {
+				newFilePath = URLDecoder.decode(oldFilePath, "utf-8");//将utf-8形式的编码转换为原来的中文
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			newFilePath = oldFilePath;
+		}
+		return newFilePath;
+	}
+	/**
+	 * @function 获得文件的中文名称
+	 * @return
+	 */
+
+	private String setNewFileName() {
+		if (newFilePath != null && !"".equals(newFilePath)) {
+			String[] fileName = newFilePath.split("/");
+			newFileName = fileName[fileName.length - 1];
+			return fileName[fileName.length - 1];
+		}
+		return null;
+	}
+
+	/**
+	 * @function 将文件URL设置为UTF-8形式（标准形式）
+	 * @return
+	 */
+	private String setNewFilePath_utf8() {
+
+		if (pathBeforeFile != null && !"".equals(pathBeforeFile)) {
+			if (newFileName != null && !"".equals(newFileName)) {
+				if (!newFileName.matches(".*%\\w{2}%.*")) {//判断是否是utf-8编码
+					try {
+						newFilePath_utf8 = pathBeforeFile + "/"
+								+ URLEncoder.encode(newFileName, "utf-8");//将utf-8形式的编码转换为原来的中文
+
+						return newFilePath_utf8;
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					newFilePath_utf8 = pathBeforeFile + "/" + newFileName;
+
+				}
+			}
+		}
+		return newFilePath_utf8;
+	}
+
+	/**
+	 * @function 获得文件的类型
+	 */
+	private void setFileType() {
+		if (oldFilePath != null && !"".equals(oldFilePath)) {
+			fileType = oldFilePath.substring(oldFilePath.lastIndexOf(".") + 1);
+		}
+	}
+	
+	/**
+	 * @function 获得文件不含文件类型的文件名称  如 “ 你好.jpg ” 这里获得 “ 你好”
+	 */
+
+	private void setNewFileNameWithoutType() {
+		if (newFileName != null && !"".equals(newFileName)) {
+			newFileNameWithoutType = newFileName.substring(0,
+					newFileName.lastIndexOf("."));
+		}
+	}
+	
+	/**
+	 * @function 获得文件去除掉百分号的文件名称
+	 */
+
+	public void setOldFileNameNoPer() {
+		if (oldFileName != null && !"".equals(oldFileName)) {
+			if (oldFileName.contains("%")) {
+				oldFileNameNoPer = oldFileName.replace("%", "");
+			}else{
+				oldFileNameNoPer = oldFileName;
+			}
+		}
+	}
+	/**
+	 * @function 获得不含文件类型同时不含百分号的久文件名
+	 */
+
+	public void setOldFileNameNoPerWithoutType() {
+		if (oldFileNameNoPer != null && !"".equals(oldFileNameNoPer)) {
+			oldFileNameNoPerWithoutType = oldFileNameNoPer.substring(0,
+					oldFileNameNoPer.lastIndexOf("."));
+		}
+	}
+
+	public String getOldFileNameNoPerWithoutType() {
+		return oldFileNameNoPerWithoutType;
+	}
+
+	public String getOldFileNameNoPer() {
+		return oldFileNameNoPer;
+	}
+
+	public String getNewFileNameWithoutType() {
+		return newFileNameWithoutType;
+	}
+
+	public String getFileType() {
+		return fileType;
+	}
+
+	public String getOldFilePath() {
+		return oldFilePath;
+	}
+
+	public String getNewFilePath() {
+		return newFilePath;
+	}
+
+	public String getOldFileName() {
+		return oldFileName;
+	}
+
+	public String getNewFileName() {
+		return newFileName;
+	}
+
+	public String getPathBeforeFile() {
+		return pathBeforeFile;
+	}
+
+	public String getNewFilePath_utf8() {
+		return newFilePath_utf8;
+	}
+
+	public static void main(String[] args) {
+		// GetFileName fileName = new GetFileName(
+		// "http://www.qdedu.gov.cn/qdedu/temp/e030cf73-b73f-4449-9a7b-a2152e1e7c93/%6559%80B2%5DE5%4F5C%60C5%51B5%FF3B2011%FF3D287%671F%7167%7247.jpg");
+		GetFileName fileName = new GetFileName(
+				"http://www.qdedu.gov.cn/qdedu/temp/700d6d3a-9691-4beb-941f-c778a842c65a/%E9%9D%92%E6%95%99%E5%8A%9E%E5%AD%97%EF%BC%BB2011%EF%BC%BD144%E5%8F%B7%E9%99%84%E4%BB%B6.doc");
+		System.out.println(fileName.getOldFileName());
+		System.out.println(fileName.getNewFilePath());
+		System.out.println(fileName.getNewFileName());
+		System.out.println(fileName.getPathBeforeFile());
+		System.out.println("newFilePath_utf8" + fileName.getNewFilePath_utf8());
+		System.out.println(fileName.getFileType());
+		System.out.println(fileName.getNewFileNameWithoutType());
+		System.out.println(fileName.getOldFileNameNoPer());
+		System.out.println(fileName.getOldFileNameNoPerWithoutType());
+
+	}
+
+}

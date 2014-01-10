@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<result>
+<title>工作动态</title>
+<department>
+<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/xuesheng/ShowClass.asp?ClassID=101">学管动态</a>
+<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/xuesheng/ShowClass.asp?ClassID=36">学生活动</a>
+<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/xuesheng/ShowClass.asp?ClassID=35">文学园地</a>
+</department>
+</result>

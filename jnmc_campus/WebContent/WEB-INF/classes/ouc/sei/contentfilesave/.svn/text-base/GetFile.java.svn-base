@@ -1,0 +1,81 @@
+package ouc.sei.contentfilesave;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+
+import ouc.sei.common.Constant;
+
+public class GetFile {
+	
+	public String filename1 = null;
+	public String htmlString = null;
+	private String defaultpath = Constant.fileSaveUrl;// 文件默认的存储路径
+
+	public GetFile(String filename,String htmlString)
+	{
+		this.filename1 = filename;
+		this.htmlString = htmlString;
+		isExist();
+		
+	}
+	
+	/**
+	 * 判断文件夹中是否存在文件名，如果存在什么都不做，如果不存在调用FileSave存储文件
+	 */
+	public void isExist()
+	{
+				File file = new File(defaultpath);  
+				File[] lists = file.listFiles();
+				for(int i=0; i< lists.length; i++)
+				{
+					if(lists[i].isFile())
+					{
+						String fileName = lists[i].getName();
+						Constant.fileList.put(fileName, filename1);
+					}
+				}
+//			    String[] filelist = file.list();   
+//			    for(int i = 0; i < filelist.length; i++)   
+//			    {
+//			    	System.out.print(filelist[i]);
+//			    }     
+	}
+	
+	/**
+	 * 将点击过的新闻正文存到文件中
+	 * @param filename
+	 * @param htmlString
+	 * @param encoding
+	 */
+	public void FileSave(String filename,String htmlString,String encoding)
+	{
+		boolean s = Constant.fileList.containsKey(filename1+".html");
+		System.out.println(s);
+		if(s)
+		{
+			System.out.println("faillllllllllllllllllllllllllllllllll");
+		}
+		else
+		{
+			try { 
+	            FileOutputStream fos = new FileOutputStream(defaultpath + filename + ".html"); 
+	            OutputStreamWriter osw = new OutputStreamWriter(fos, encoding); 
+	            htmlString = htmlString.replace("src=\"pic/", "src=\"../pic/");
+	            osw.write(htmlString); 
+	            osw.flush(); 
+	            osw.close(); 
+	            fos.close(); 
+	            System.out.println("sucessessssssssssssssssssssssss");
+		        } catch (Exception e) { 
+		            e.printStackTrace(); 
+		        } 
+			isExist();	
+		}
+	}
+	
+	public static void main(String[] args)
+	{
+
+	}
+}

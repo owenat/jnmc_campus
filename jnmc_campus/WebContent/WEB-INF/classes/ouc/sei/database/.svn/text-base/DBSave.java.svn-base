@@ -1,0 +1,104 @@
+package ouc.sei.database;
+/**
+ * 将抽取下来的正文内容存入数据库，其中数据库中只有一个表，两个字段
+ * web字段用来存储用md5加密后的weburl网址，是唯一的
+ * content字段用来存储抽取下来的xml格式的正文
+ */
+import java.sql.*;
+import java.util.Calendar;
+import java.util.Date;
+public class DBSave 
+{
+
+	private String weburl;
+	private String htmlstr;
+	
+	public DBSave(String weburl, String htmlstr)
+	{
+		this.weburl = weburl;
+		this.htmlstr = htmlstr;
+	}
+	/**
+	 * 这是网页内容存取数据库的逻辑，其中数据库的存储两个字段都不能为空，同时weburl是主键
+	 * 1.数据库初始时全部为空，这样一开始不必判断主键是否重复
+	 * 2.如果是已经存储过了，需要判断网址是不是在主键里，是则不再存储，不是就存储
+	 * 3.如果假设抽出来的有异常，为空，则存储数据库报错(因为字段不能为空)，处理这种情况
+	 * 4.注意逻辑处理
+	 * @param weburl
+	 * @param htmlstr
+	 * @param encoding
+	 * @throws SQLException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	public void save(String weburl, String htmlstr, String encoding) throws SQLException, InstantiationException, IllegalAccessException
+	{
+		Calendar c = Calendar.getInstance();
+		Date d = c.getTime();
+		String a = d.toString();
+		System.out.println(a);
+		
+		Connection conn = Conn.getConnection();			
+		java.sql.Statement stmt = conn.createStatement();
+			
+		/**
+		 * 如果htmlstr为空，出错
+		 */
+		if(htmlstr.equals(null)|| htmlstr == null)
+		{
+			System.out.println("数据抽取内容为空，无法写入数据库，程序出错");
+		}
+		else
+		{	
+			/**
+			 * 如果数据库不存在，则保存
+			 */
+			if(IsExist(weburl))
+			{
+				System.out.println("插入数据不存在，可以插入！");
+				//SQL操作逻辑处理
+				String sql2 = "insert into file (web,content,time) values (" + "'" + weburl + "'" + "," 
+			                                                        + "'" + htmlstr + "'" + ","
+			                                                        + "'" + a + "'" + ")";	
+				System.out.println(sql2);
+				stmt.executeUpdate(sql2);
+			}
+			else
+				System.out.println("数据库中已经存在这条数据，无法保存");
+	//		java.sql.ResultSet rs = stmt.executeQuery(
+	//				"select");
+	//		rs.close();
+			stmt.close();
+			conn.close();
+		}
+	}
+	/**
+	 * 遍历数据库，利用索引查询出所有的网址，保存
+	 * @param html
+	 * @return
+	 */
+	public boolean IsExist(String web)
+	{
+		Connection conn = Conn.getConnection();
+		String sql = "select * from file where web = ?";
+		try
+		{
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, web);
+			ResultSet rs = ps.executeQuery();
+			if(!rs.next())
+			{
+				return true;
+			}			
+			rs.close();
+			ps.close();
+		}catch(SQLException e)
+		{
+			e.printStackTrace();
+		}finally	
+		{
+			Conn.closeConnection(conn);
+		}
+		return false;
+	}
+}

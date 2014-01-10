@@ -1,0 +1,70 @@
+10
+
+dir
+2327
+http://211.64.154.123:8080/svn/BS2WAP/zgsy/src/ouc/sei
+http://211.64.154.123:8080/svn/BS2WAP
+
+
+
+2013-10-09T08:36:52.715500Z
+2326
+cy
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4e0e7701-e4e7-9c46-826f-82abeef145e2
+
+operate
+dir
+
+xmltojsp
+dir
+
+docoperator
+dir
+
+browser
+dir
+
+Servlet
+dir
+
+database
+dir
+
+beans
+dir
+
+common
+dir
+
+filters
+dir
+
+loginTest
+dir
+
+contentfilesave
+dir
+
+regexOperate
+dir
+
+transform
+dir
+
+imgoperate
+dir
+

@@ -1,0 +1,125 @@
+package ouc.sei.operate;
+
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import ouc.sei.beans.Rule;
+import ouc.sei.common.Constant;
+/**
+ * 通过匹配url提取相应的模板
+ * @author qsw
+ *
+ */
+public class RuleListOperater{
+	private String xmlTem = null;    //提取xml模板
+	private String showTem = null;   //显示模板
+	private static RuleListOperater instance; //默认单例
+	/**
+	 * 默认构造函数
+	 */
+	public RuleListOperater(){
+		
+	}
+	/**
+	 * 匹配两个字符串是否相等
+	 * @param inputStr    待匹配的str
+	 * @param regex       匹配规则
+	 * @return            匹配成功与否
+	 */
+	private boolean regexStr(String inputStr,String regex){
+		Pattern p=Pattern.compile(regex);//匹配content
+		Matcher   m   =   p.matcher(inputStr); 
+		return m.matches();
+	}
+	/**
+	 * 根据网页url得到将要跳转的url
+	 * @param url
+	 * @return
+	 */
+	/*public String getRedirect(String url){
+		int length = Constant.resirectList.size();
+		for(int i=0;i<length;i++){
+			if(regexStr(url,Constant.resirectList.elementAt(i).getRegex())){
+				return Constant.resirectList.elementAt(i).getRedirectUrl();
+			}
+		}
+		return null;
+	}*/
+	
+	/**
+	 * 提取xml模板和显示模板
+	 * @param webUrl
+	 * @return   含有两类模板的Rule实例
+	 */
+	public Rule getTemplate(String webUrl){
+		this.xmlTem=this.showTem=null;
+		int length = Constant.ruleList.size();
+		System.out.println("ruleList的长度为"+length);
+		for(int i = 0; i < length-1; i ++){
+//			System.out.println("in getTemplate,webUrl="+webUrl);
+			String regex=Constant.ruleList.elementAt(i).getUrlRegex();
+//			System.out.println("in getTemplate,regex="+regex);
+			if(regexStr(webUrl, regex)){
+				xmlTem = Constant.ruleList.elementAt(i).getXmlTem();
+				showTem = Constant.ruleList.elementAt(i).getShowTem();
+				System.out.println("已经得到模板");
+				break;
+			}
+			
+		}
+		if(xmlTem == null){//没有得到对应的模板匹配，需要调用缺省的模板。（最后一个存储的是缺省的模板）
+			System.out.println("没有找到对应的模板，使用默认模板");
+			xmlTem = Constant.ruleList.elementAt(length-1).getXmlTem();
+			showTem = Constant.ruleList.elementAt(length-1).getShowTem();
+		}
+		return new Rule(null, xmlTem, showTem);
+	}
+	
+	/**
+	 * 提供给外界的单例调用方法
+	 * @return
+	 */
+	public static RuleListOperater newInstance(){
+		if(instance==null){
+			return instance=new RuleListOperater();
+		}else{
+			return instance;
+		}		
+	}
+	
+	
+	public Rule getTempateByUrl(String url){
+		Rule r = getTemplate(url);
+		System.out.println("in getTempateByUrl.......");
+		return r;
+	}
+	
+	/**
+	 * 判断是否需要二次处理
+	 * @param webUrl
+	 * @return
+	 */
+	/*public  boolean isSecondHandle(String webUrl)
+	{
+		int length = Constant.secondHandleFliter.size();
+		for(int i = 0;i<length;i++){
+			if(regexStr(webUrl,Constant.secondHandleFliter.elementAt(i)))
+			{
+				System.out.println("列表里有你啊哈哈");
+				return true;
+			}
+		}
+		return false;
+	}*/
+	
+	public static void main(String [] args)
+	{
+		RuleListOperater r=new RuleListOperater();
+		String url="http://www.qdsf.gov.cn/n241/n243/n282/n307/n14450541/14501426.html";
+		String regex="^http://www.qdsf.gov.cn/n241/n243/n282/n3.*.html$";
+		boolean res=r.regexStr(url,regex);
+		
+		System.out.println("匹配结果===="+res);
+	}
+}

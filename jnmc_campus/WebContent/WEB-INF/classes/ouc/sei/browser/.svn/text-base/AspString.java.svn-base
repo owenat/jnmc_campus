@@ -1,0 +1,150 @@
+package ouc.sei.browser;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import ouc.sei.beans.ASPPageParams;
+import ouc.sei.common.Constant;
+
+/**
+ * 处理如果asp分页是只有上一页，下一页的情况
+ * @author LF
+ *
+ */
+public class AspString extends Browser{
+//	String viewstate="";
+//	String userId=null;
+	public AspString(){
+		super();
+	}
+	public AspString(String webUrl){
+		super(webUrl);
+	}
+
+	/**
+	 * 重写父类的方法，获取Asp分页的html代码
+	 */
+	public String getAjaxPage(String pageNum,String id) {
+		this.userId=id;
+		// TODO Auto-generated method stub
+		StringBuffer sb=null;
+		HttpResponse response = null;
+		UrlEncodedFormEntity urlEntity = null;
+		ClientOperate oper=new ClientOperate();
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		HttpPost httpost = new HttpPost(this.webUrl);
+		int ii=Integer.parseInt(id);
+		ASPPageParams ci=Constant.pageCookiesList.get(ii);
+		//System.out.println("---"+ci.get__VIEWSTATE());
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("__VIEWSTATE",ci.get__VIEWSTATE()));
+		nvps.add(new BasicNameValuePair("__EVENTTARGET",pageNum));
+		try {
+			urlEntity = new UrlEncodedFormEntity(nvps,
+					HTTP.UTF_8);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		httpost.setEntity(urlEntity);
+		
+		try {
+			response = httpclient.execute(httpost);
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		HttpEntity entity = response.getEntity();
+		try {
+			 sb= oper.processEntity(entity,Constant.pageEncode);
+		} catch (RuntimeException ex) {
+			httpost.abort();
+			throw ex;
+		}
+		httpclient.getConnectionManager().shutdown();
+		String ss=sb.toString();
+		
+		return ss;
+	}
+/**
+ * 把杂乱的html流，转化为标准的XML
+ */
+	@Override
+	public Document HTMLToXML(String htmlStr) {
+	
+		Document doc=super.HTMLToXML(htmlStr);//调用该类进行初级的html处理
+		NodeList list = doc.getElementsByTagName("input"); 
+		for (int i = 0; i < list.getLength(); i++) { //获取cookie的信息参数：__VIEWSTATE
+			Element in1=(Element) list.item(i);
+			String id=in1.getAttribute("name");
+			if(id.equals("__VIEWSTATE")){
+				viewstate=in1.getAttribute("value");
+				//System.out.println("viewstate==="+viewstate);
+				if(userId==""||userId==null){
+					ASPPageParams ci=new ASPPageParams();
+					ci.set__VIEWSTATE(viewstate);
+					Constant.pageCookiesList.put(Constant.i++, ci);
+				}
+				else{
+					Constant.pageCookiesList.get(Integer.parseInt(userId)).set__VIEWSTATE(viewstate);
+				}
+			}
+		}
+		return doc;
+	}
+	
+	public static void main(String[]args){
+		Browser b=new AspString("http://qdcz.qingdao.gov.cn/ShowCategory.aspx?categoryID=1");
+		String s="";
+		try {
+			s=b.getSource(0);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//System.out.println("--------"+s);
+		Document dom=b.HTMLToXML(s);
+		Hashtable table=Constant.pageCookiesList;
+		
+		Enumeration en = table.keys();
+	       while(en.hasMoreElements()){
+	          Object ele = en.nextElement();
+	          ASPPageParams cc=(ASPPageParams) table.get(ele);
+	          System.out.println(ele);
+	       }
+	       
+	    String sss=b.getAjaxPage("",String.valueOf(1));  
+	    //System.out.println(sss);
+	    Document dom1=b.HTMLToXML(sss);
+	    Browser b1=new AspString("http://qdcz.qingdao.gov.cn/ShowCategory.aspx?categoryID=1");
+		
+	       
+	    String sss1=b1.getAjaxPage("",String.valueOf(1));  
+	    b1.HTMLToXML(sss1);
+	    Browser b11=new AspString("http://qdcz.qingdao.gov.cn/ShowCategory.aspx?categoryID=1");
+		
+	    String s333=b11.getAjaxPage("","1");
+	    System.out.println(s333);
+		
+	}
+
+}

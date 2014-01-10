@@ -1,0 +1,46 @@
+package ouc.sei.beans;
+/**
+ *@author dingrui
+ *2011-7-6
+ */
+
+/**
+ * 超链接路径补全的正则匹配
+ * @author dingrui
+ */
+public class FilterBean {
+
+	private String regex=null;
+	private String addStr=null;
+	private String rootUrlRegex=null;
+	
+	public FilterBean(String rootUrl,String regex,String addStr){
+		this.setRootUrlRegex(rootUrl);
+		this.regex=regex;
+		this.addStr=addStr;
+	}
+
+	public String getRegex() {
+		return regex;
+	}
+
+	public void setRegex(String regex) {
+		this.regex = regex;
+	}
+
+	public String getAddStr() {
+		return addStr;
+	}
+
+	public void setAddStr(String addStr) {
+		this.addStr = addStr;
+	}
+
+	public void setRootUrlRegex(String rootUrlRegex) {
+		this.rootUrlRegex = rootUrlRegex;
+	}
+
+	public String getRootUrlRegex() {
+		return rootUrlRegex;
+	}
+}

@@ -1,0 +1,122 @@
+/**
+ * @author Yang zhilong
+ * @function 主要实现下载doc、xls、txt、pdf文档功能
+ * @date 2011-11-05
+ */
+package ouc.sei.docoperator;
+
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+public class DownloadFile {
+	private GetFileName fileName = null;
+	private String webUrl;
+	private String docPath ;
+	
+	/**
+	 * @function 构造函数,初始化要下载文件的路径，下载文件远程地址，下载文件的名字
+	 * @param webUrl 远程地址
+	 * @param docPath 下载文件路径
+	 */
+	public DownloadFile(String webUrl ,String  docPath) {
+		this.docPath = docPath;
+		fileName = new GetFileName(webUrl);
+		this.webUrl = fileName.getNewFilePath_utf8();//文件远程地址的utf-8形式
+	}
+	
+	/**
+	 * @deprecated 这个方法使用了HttpURLConnection实现文件的下载，
+	 * 			        在实现验证码的下载时，会出现不同步的情况已经被saveToFile2()代替
+	 * @see saveToFile2()
+	 */
+	public void saveToFile() {
+		String newFileName = fileName.getOldFileNameNoPer();
+		FileOutputStream fos = null;
+		BufferedInputStream bis = null;
+		HttpURLConnection httpUrl = null;
+		URL url = null;
+		int BUFFER_SIZE = 1024;
+		byte[] buf = new byte[BUFFER_SIZE];
+		int size = 0;
+
+		try {
+			url = new URL(webUrl);
+			httpUrl = (HttpURLConnection) url.openConnection();
+			httpUrl.connect();
+			bis = new BufferedInputStream(httpUrl.getInputStream());
+			fos = new FileOutputStream(docPath + newFileName);
+			while ((size = bis.read(buf)) != -1) {
+				fos.write(buf, 0, size);
+			}
+			fos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				fos.close();
+				bis.close();
+				httpUrl.disconnect();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+	
+	/**
+	 * @function 主要实现了文件的下载，同时实现了验证码的同步。同时这也是当前系统中使用的方法
+	 * 
+	 */
+	public void saveToFile2() {
+		String newFileName = fileName.getOldFileNameNoPer();//获得没有百分号的文件名
+		DefaultHttpClient client = new DefaultHttpClient();
+		HttpGet get = new HttpGet(webUrl);
+		FileOutputStream fos = null;
+		try {
+			HttpResponse response = client.execute(get);
+			HttpEntity entity = response.getEntity();
+			if (entity.isStreaming()) {//如果是流形式就进行下载操作
+				byte[] codes = EntityUtils.toByteArray(entity);
+				fos = new FileOutputStream(docPath + newFileName);//保存文件
+				fos.write(codes);
+			}
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				fos.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			get.abort();//注意，一定要关闭get请求，否则会出错。
+		}
+
+	}
+
+	public void setPicUrl(String docPath) {
+		this.docPath = docPath;
+	}
+
+	public static void main(String[] args) throws UnsupportedEncodingException {
+		
+
+	}
+}

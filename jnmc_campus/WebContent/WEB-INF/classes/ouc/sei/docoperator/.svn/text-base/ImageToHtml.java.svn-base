@@ -1,0 +1,125 @@
+/**
+ * @author Yang zhilong
+ * @function 主要对于转换好的每张png图片对应建立一个HTML文件，在HTML文件当中显示图片
+ * @date 2011-11-05
+ * 
+ */
+package ouc.sei.docoperator;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class ImageToHtml {
+
+	/**
+	 * @function 因为是一个工具类，所以设置为单实例模式
+	 */
+	private ImageToHtml() {
+	}
+
+	private static final ImageToHtml util = new ImageToHtml();
+
+	public static ImageToHtml getPdfBoxUtilInstance() {
+		return util;
+	}
+
+	/**
+	 * @function 生成html文件
+	 * @param n 要生成文件的个数
+	 * @param fileNameNoType 不很文件类型的文件名
+	 * @param filePath pdf，doc，xls等文件按的所在位置
+	 */
+	public synchronized void image2html(int n, String fileNameNoType, String filePath) {
+
+		String titleName = "";
+		String indexPage = "";
+		String back = "";
+		String next = "";
+		String endPage = "";
+		String image = "";
+		String templateContent = "";
+		String filePathName = "";
+		String tempPath = this.getClass().getResource("/").getPath();
+		// 模板文件template.html需要放在与字节码同一个文件夹下，即classes文件夹下
+		String templatePath = tempPath.substring(tempPath.indexOf('/') + 1);
+		// 读取路径后把找到template.html注意，本文件必须放在此处，否则会出错
+		templatePath = templatePath + "template.html";
+		FileInputStream fileinputstream = null;
+		for (int i = 1; i <= n; i++) {
+			// TODO 自动生成方法存根
+			byte[] bytes = null;
+
+			try {
+				fileinputstream = new FileInputStream(templatePath);// 读取模块文件
+				int length = fileinputstream.available();
+				bytes = new byte[length];
+				fileinputstream.read(bytes);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}// 将模板中的内容读入bytes数组中
+			finally {
+				try {
+					fileinputstream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			templateContent = new String(bytes);
+			titleName = fileNameNoType + i;
+			indexPage = fileNameNoType + 1 + ".html";
+			back = fileNameNoType + (i - 1) + ".html";
+			next = fileNameNoType + (i + 1) + ".html";
+			endPage = fileNameNoType + n + ".html";
+			image = fileNameNoType + i + ".png";
+			if (i == 1) {//如果当前位置为第一页则第一页，和返回页超链接不可用
+				indexPage = "#";
+				back = "#";
+			}
+			if (i == n) {//如果当前页为最后一页，则最后一页和下一页超链接不可用
+				endPage = "#";
+				next = "#";
+			}
+			templateContent = templateContent
+					.replaceAll("titleName", titleName); // 替换掉模块中相应的地方
+			templateContent = templateContent
+					.replaceAll("indexPage", indexPage);
+			templateContent = templateContent.replaceAll("back", back);
+			templateContent = templateContent.replaceAll("next", next);
+			templateContent = templateContent.replaceAll("endPage", endPage);
+			templateContent = templateContent.replaceAll("image", image);
+
+
+			filePathName = filePath+ fileNameNoType + i + ".html"; // 生成的html文件保存路径
+
+			FileOutputStream fileoutputstream = null;
+			try {
+				fileoutputstream = new FileOutputStream(filePathName);
+				byte tag_bytes[] = templateContent.getBytes();
+				fileoutputstream.write(tag_bytes);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}// 建立文件输出流
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally{
+				try {
+					fileoutputstream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			
+		}
+
+	}
+
+}

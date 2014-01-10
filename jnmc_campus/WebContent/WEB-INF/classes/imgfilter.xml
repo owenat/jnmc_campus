@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<result>
+<!-- 新闻 -->
+    <rule>
+		<rootUrlRegex>^*.*$</rootUrlRegex>
+		<regex>^.*jydt/UploadFiles_2984.*$</regex>
+		<addStr>http://www.jnmc.edu.cn</addStr>
+	</rule>
+<!-- 基础学院 -->
+    <rule>
+		<rootUrlRegex>^.*210.44.16.109.*$</rootUrlRegex>
+		<regex>^.*uploads.*$</regex>
+		<addStr>http://210.44.16.109/</addStr>
+	</rule>
+<!-- 精神卫生学院 -->
+    <rule>
+		<rootUrlRegex>^.*210.44.16.40.*$</rootUrlRegex>
+		<regex>^.*uploads.*$</regex>
+		<addStr></addStr>
+	</rule>
+
+	<defaultRule>
+		<addStr>http://www.jnmc.edu.cn</addStr>
+	</defaultRule>
+</result>

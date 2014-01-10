@@ -1,0 +1,84 @@
+package ouc.sei.common;
+
+import java.io.IOException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import ouc.sei.beans.ASPPageParams;
+import ouc.sei.browser.AspDigit;
+import ouc.sei.browser.Browser;
+import ouc.sei.transform.HTML2XML;
+
+/**
+ * 类封装了asp分页中素需要的参数
+ * @author qsw-Myonlystar
+ *
+ */
+public class ASPPageParas {
+	private static ASPPageParas instance;
+	public static String ASPPageUrl=null;
+	public static String __EVENTVALIDATION=null;
+	public static String __EVENTTARGET=null;
+	/*以上三个参数，在tomcat启动时，通过读取配置文件可以配置，__VIEWSTATE需要从页面实时抓取*/
+	public static String __VIEWSTATE=null;
+	private static String pageClassName=Constant.pageClassName;//获得处理分页要用的类
+	public ASPPageParas(){
+		try {
+			try {
+				initVIEWSTATE();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * 抓取页面初始化VIEWSTATE参数
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	private void initVIEWSTATE() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+		Class cc=Class.forName(pageClassName);
+		Object o=cc.newInstance();
+		Browser b=(Browser)o;
+		b.setWebUrl(this.ASPPageUrl);
+		String htmlStr=b.getSource(0);
+		//System.out.println(htmlStr);
+		AspDigit h=new AspDigit();
+		Document d=h.HTMLToXML(htmlStr);
+		NodeList nl=d.getElementsByTagName("input");
+		for(int i=0;i<nl.getLength();i++){
+			Element in=(Element) nl.item(i);
+			if(in.getAttribute("id").equals("__VIEWSTATE"))
+				this.__VIEWSTATE=in.getAttribute("value");
+		}
+		
+		//System.out.println("viewstate==="+this.__VIEWSTATE);
+	}
+	public static ASPPageParas newInstance(){
+		if(instance==null){
+			instance=new ASPPageParas();
+		}
+		return instance;
+	}
+	/**
+	 * test
+	 * @param args
+	 */
+	public static void main(String args[]){
+		ASPPageParas.newInstance(); 
+	}
+}

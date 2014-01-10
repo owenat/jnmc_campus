@@ -1,0 +1,111 @@
+/**
+ * @author Yang zhilong
+ * @function 将pdf文件转换为png文件，转换好的png文件放在以pdf文件名称命名的文件夹下
+ * @date 2011-11-05
+ * 
+ */
+package ouc.sei.docoperator;
+
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import javax.imageio.ImageIO;
+import com.sun.pdfview.PDFFile;
+import com.sun.pdfview.PDFPage;
+
+public class PdfToImage {
+	/**
+	 * @param args
+	 */
+	private int pageNum = 0;
+
+	/**
+	 * @function 因为是一个工具类，所以设置为单实例模式
+	 */
+	private PdfToImage() {
+	}
+
+	private static PdfToImage instance = new PdfToImage();
+
+	public static PdfToImage getInstance() {
+		return instance;
+	}
+	
+	/**
+	 * @function 这里使用了pdfrenderer框架以将pdf转换为png文件，pdf文件的一页转换为一张图片，有几页就转换几张
+	 * @param sourceFilePath pdf文件路径
+	 * @param targetFilePath 生成的png文件路径
+	 * @param fileName 生成的png文件的名称
+	 */
+	public synchronized void pdf2Image(String sourceFilePath,
+			String targetFilePath, String fileName) {
+		File file = new File(sourceFilePath + fileName);
+		RandomAccessFile raf;
+		try {
+			raf = new RandomAccessFile(file, "r");
+			FileChannel channel = raf.getChannel();
+			ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0,
+					channel.size());
+			PDFFile pdffile = new PDFFile(buf);
+			// draw the first page to an image
+			setPageNum(pdffile.getNumPages());
+			int num = pdffile.getNumPages();
+			for (int i = 1; i <= num; i++) {
+				PDFPage page = pdffile.getPage(i);
+				// get the width and height for the doc at the default zoom
+				int width = (int) page.getBBox().getWidth();
+				int height = (int) page.getBBox().getHeight();
+
+				Rectangle rect = new Rectangle(0, 0, width, height);
+				int rotation = page.getRotation();
+				Rectangle rect1 = rect;
+				if (rotation == 90 || rotation == 270)
+					rect1 = new Rectangle(0, 0, rect.height, rect.width);
+
+				// generate the image
+				BufferedImage img = (BufferedImage) page.getImage(rect.width,
+						rect.height, // width & height
+						rect1, // clip rect
+						null, // null for the ImageObserver
+						true, // fill background with white
+						true // block until drawing is done
+						);
+
+				File f = new File(targetFilePath);
+				f.mkdirs();//建立路径，如果没有建立这个路径，会出错
+				String tempFileName = null;
+				if (fileName.matches(".*[\\.].*")) {
+					tempFileName = fileName.substring(0, fileName.indexOf("."));
+				} else {
+					tempFileName = fileName;
+				}
+
+				ImageIO.write(img, "png", new File(targetFilePath
+						+ tempFileName + i + ".png"));//png文件的路径是pdf文件所在文件夹下的以pdf文件名称的文件夹
+													//png文件的名称在pdf文件的文件名的基础上加上了图片是第几张的编号
+
+			}
+		} catch (FileNotFoundException e1) {
+			System.err.println(e1.getLocalizedMessage());
+		} catch (IOException e) {
+			System.err.println(e.getLocalizedMessage());
+		}
+	}
+
+	private void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
+	}
+
+	public int getPageNum() {
+		return pageNum;
+	}
+
+	public static void main(String[] args) {
+	}
+
+}

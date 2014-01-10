@@ -1,0 +1,58 @@
+/**
+ * @author Yang zhilong
+ * @function 对于已经下载下来的文件放入一个documentList链中，当用户再次访问这个文件时直接提取即可，而不用再次下载转换
+ * @date 2011-11-05
+ * 
+ */
+package ouc.sei.docoperator;
+
+import java.io.File;
+
+import ouc.sei.common.Constant;
+
+public class DocNametoHash {
+	private String filePath = null;//存放office，pdf文件的地址
+
+	public DocNametoHash(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public DocNametoHash() {
+
+	}
+
+	/**
+	 * @function 每当服务器启动时，将已经下载下来的文件读入documentList链中，当用户再次访问这个文件时直接提取即可，而不用再次下载转换
+	 */
+	public void existentFiletoHash() {
+		File path = new File(filePath);
+		File[] lists = path.listFiles();
+		for (int i = 0, length = lists.length; i < length; i++) {
+			if (lists[i].isFile()
+					&& Constant.documentList.get(lists[i].getName()) == null) {//判断文件是不是文件，同时放没有放入链中
+				Constant.documentList.put(lists[i].getName(),
+						lists[i].getName());
+				lists[i].getName();
+			}
+		}
+	}
+	
+	/**
+	 * @function 当用户访问了从未访问过的文件时，下载这个文件，同时将这个文件存入链中
+	 * @param fileName
+	 */
+
+	public void downloadFiletoHash(String fileName) {
+		if (Constant.documentList.get(fileName) == null) {
+			Constant.documentList.put(fileName, fileName);//将新下载的文件放入链中
+		}
+	}
+
+	public Boolean hashContainsFile(String fileName) {
+		if (Constant.documentList.containsKey(fileName)) {
+			return true;
+		}
+		return false;
+	}
+
+}

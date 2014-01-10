@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--here ,we define the constant quality,when tomcat start,loading them automatically-->
+<result>
+	<defaultWebUrl>http://www.jnmc.edu.cn/</defaultWebUrl>
+	<!-- <pageClassName>ouc.sei.browser.AspString</pageClassName>The class name which whill be used. -->
+	<baseUrl2>http://localhost:8080/jnmc_campus/</baseUrl2>
+	<baseUrl>http://localhost:8080/jnmc_campus/show.jsp?webUrl=</baseUrl><!--The base url used to make up of the whole url.-->
+	<hrefUrl>http://www.jnmc.edu.cn/</hrefUrl><!--The base url used to link the read url.-->
+	<picSaveUrl>pic/</picSaveUrl>
+	<htmlSaveUrl>html/</htmlSaveUrl>
+	<htmlUrl>http://localhost:8080/jnmc_campus/html/</htmlUrl>
+	<picUrl>http://localhost:8080/jnmc_campus/pic/</picUrl><!--The base url of the pictures.-->
+	<!--WebPage encode-->
+	<pageEncode>utf-8</pageEncode><!--The default type of the source code.-->
+	<formPostEncode></formPostEncode>
+	<documentSavePath></documentSavePath>
+	<ASPPageUrl></ASPPageUrl>
+	<C_SCHEDULE_HOUR>0</C_SCHEDULE_HOUR>
+	<indexflash>30</indexflash>
+</result>

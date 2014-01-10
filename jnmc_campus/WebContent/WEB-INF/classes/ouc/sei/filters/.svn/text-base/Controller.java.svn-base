@@ -1,0 +1,136 @@
+package ouc.sei.filters;
+
+/**
+ * @author qsw-Myonlystar
+ * 
+ */
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import ouc.sei.beans.Rule;
+import ouc.sei.common.Constant;
+import ouc.sei.operate.RuleListOperater;
+import ouc.sei.transform.MD5;
+
+/**
+ * Servlet Filter implementation class Controller
+ */
+public class Controller implements Filter {
+	private String webUrl = "";//
+	private Rule rule = null;
+//	private String page = "";
+//	private String userid = "";
+//	private RedirectBean reb = new RedirectBean();
+
+	/**
+	 * Default constructor.
+	 */
+	public Controller() {
+		// TODO Auto-generated constructor stub
+		System.out.println("filter's constructor!");
+	}
+
+	/**
+	 * @see Filter#destroy()
+	 */
+	public void destroy() {
+		// TODO Auto-generated method stub
+		System.out.println("filter is destroy!");
+	}
+
+	/**
+	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
+	 */
+	public void doFilter(ServletRequest request, ServletResponse response,
+			FilterChain chain) throws IOException, ServletException {
+		// TODO Auto-generated method stub
+		// place your code here
+		HttpServletRequest req = (HttpServletRequest) request;
+		HttpServletResponse resp = (HttpServletResponse) response;
+		javax.servlet.http.HttpSession session = req.getSession();
+		req.setCharacterEncoding("UTF-8");
+		String xmlTem = "";
+		String jspTem = "";
+		String realUrl = "";
+
+		String param = req.getQueryString();
+		System.out.println("in controller param=" + param);
+		if (param != null) {
+			try {
+				webUrl = param.replaceAll("webUrl=", "");
+				System.out.println("In controller,webUrl=" + webUrl);
+			} catch (UnknownError e) {
+				e.printStackTrace();
+			}
+		} else {
+			webUrl = Constant.defaultWebUrl;
+		}
+		
+		/**
+		 * 如果文件已经保存，则重定向显示
+		 * 1.将webUrl MD5一下
+		 * 2.得到fileList
+		 * 3.if判断是否存在，如果存在显示，否则什么也不做
+		 */
+		
+		MD5 md5 = new MD5();
+		String filename2 =md5.md5s(webUrl);
+		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"+ filename2);
+		boolean s = Constant.fileList.containsKey(filename2+".html");
+		if(s){
+			resp.sendRedirect("content/" + filename2+ ".html");
+			//chain.doFilter(request, response);
+			return;
+		}
+		/**
+		 * url中通过最后的参数temtype判断页面的模板，但是抓取的时候不能用带有temtype参数的url抓取参数
+		 */
+		if (webUrl.contains("temtype")) {
+			realUrl = webUrl.substring(0, webUrl.indexOf("temtype") - 1);
+		} else {
+			realUrl = webUrl;
+		}
+		if (webUrl != null) {
+			String redirectUrl = RuleListOperater.newInstance().getRedirect(
+					webUrl);
+			if (redirectUrl != null) {
+				System.out.println("=======reback to the index page======");
+				resp.sendRedirect(redirectUrl);
+			} else {
+				rule = RuleListOperater.newInstance().getTemplate(webUrl);
+				xmlTem = rule.getXmlTem();
+				jspTem = rule.getShowTem();
+				session.setAttribute("xmlTem", xmlTem);
+				session.setAttribute("showTem", jspTem);
+				session.setAttribute("webUrl", realUrl);
+				this.webUrl = null;
+				rule = null;
+				chain.doFilter(request, response);
+			}
+		} else {
+			this.webUrl = null;
+			rule = null;
+			chain.doFilter(request, response);
+		}
+	}
+
+	/**
+	 * @see Filter#init(FilterConfig)
+	 */
+	public void init(FilterConfig fConfig) throws ServletException {
+		// TODO Auto-generated method stub
+		/*
+		 * this.home_page=fConfig.getInitParameter("HOME_URI");
+		 * System.out.println("filter is init!");
+		 */
+
+	}
+}

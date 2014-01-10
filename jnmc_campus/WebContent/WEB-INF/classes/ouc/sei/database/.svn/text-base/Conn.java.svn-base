@@ -1,0 +1,51 @@
+package ouc.sei.database;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import com.mysql.jdbc.*;
+/**
+ * 数据库连接
+ * @author cy
+ *
+ */
+public class Conn {
+
+	public static Connection getConnection()
+	{
+		Connection conn = null;
+		try
+		{
+			//注册驱动
+			Class.forName("com.mysql.jdbc.Driver");
+			//数据库连接
+			String url = "jdbc:MySQL://localhost:3306/zcjx?useUnicode=true&characterEncoding=UTF-8";
+			conn = DriverManager.getConnection(url,"root","root");
+			System.out.println("数据库注册连接成功");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return conn;
+	}
+	/**
+	 * 关闭数据库
+	 */
+	public static void closeConnection(Connection conn)
+	{
+		if(conn != null)
+		{
+			try
+			{
+				conn.close();
+				System.out.println("数据库关闭成功");
+			}
+			catch(SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+}

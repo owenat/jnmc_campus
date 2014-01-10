@@ -1,0 +1,103 @@
+package ouc.sei.operate;
+
+import java.io.IOException;
+
+import ouc.sei.beans.Rule;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import ouc.sei.browser.Browser;
+import ouc.sei.common.Constant;
+import ouc.sei.transform.DomOperater;
+import ouc.sei.transform.HTML2XML;
+
+public class SecondHandle {
+	private String xmlstr;
+	private String realurl;
+	private String xmlTem;
+	private int clientid;
+
+	public SecondHandle(String xmlstr, String xmlTem, int clientid) {
+		this.xmlstr = xmlstr;
+		this.xmlTem = xmlTem;
+		this.clientid = clientid;
+	}
+
+	/**
+	 * 根据第一次访问的地址得到要跳转的url，用来进行第二次抓取 2011-9-7 
+	 * @author zhangjing Yzl version 2.0
+	 * 
+	 * @param Weburl
+	 * @return
+	 */
+	public String getUrlFromTempale() {
+		DomOperater domo = new DomOperater();
+		Document dom = domo.stringToDom(xmlstr);
+		if (xmlstr.contains("frame")) {
+			String path = dom.getFirstChild().getFirstChild().getTextContent();
+			realurl = Constant.hrefUrl + path;
+		} else {
+			NodeList nl = dom.getElementsByTagName("link");
+			Node node = nl.item(0);
+			String b = node.getTextContent();
+			realurl = b.replaceAll("window.location.href=\"", "");
+		}
+		System.out.println("====In SecondHandle the realurl is ====="
+				+ realurl);
+		return realurl;
+	}
+
+	/***
+	 * 2011-9-7 
+	 * @author zhangjing
+	 * 
+	 * @param webUrl
+	 * @return
+	 */
+	public String dealWithMore(String webUrl) {
+		System.out.println("进行第二次抓取");
+		RuleListOperater operater = new RuleListOperater();
+		String url = getUrlFromTempale();
+		// System.out.println("url======"+url);
+		Rule r = operater.getTempateByUrl(url);
+		this.xmlTem = r.xmlTem;
+		System.out.println("模板---------" + this.xmlTem);
+		Class cc;
+		Browser browser = null;
+		String htmlStr = null;
+		try {
+			cc = Class.forName(Constant.pageClassName);
+
+			Object o = cc.newInstance();
+			browser = (Browser) o;
+			browser.setWebUrl(url);
+
+			htmlStr = browser.getSource(clientid);// 可以得到htmlSr
+			
+			HtmlFilter htmlFilter = new HtmlFilter();//注意过滤！
+			htmlStr = htmlFilter.htmlFilter(htmlStr);//过滤不能识别的标签
+			
+			System.out.println("第二次处理htmlStr====" + htmlStr);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Document dom = browser.HTMLToXML(htmlStr);
+
+		HTML2XML html2xml = new HTML2XML(dom, this.xmlTem, url, clientid);
+
+		String xmlstr = html2xml.getXmlStr();
+		return xmlstr;
+
+	}
+}

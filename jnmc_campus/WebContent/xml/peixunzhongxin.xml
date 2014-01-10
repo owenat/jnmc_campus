@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<result>
+<title>培训中心</title>
+<department>
+<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/Article/ShowClass.asp?ClassID=59">通知公告</a>
+<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/xuesheng/ShowClass.asp?ClassID=36">交流合作</a>
+<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/Article/ShowClass.asp?ClassID=58">培训业务</a>
+<a href="http://192.168.1.115:8080/zcjx/show.jsp?webUrl=http://www.zcjx.com.cn/Article/ShowClass.asp?ClassID=37">学历教育</a>
+</department>
+</result>

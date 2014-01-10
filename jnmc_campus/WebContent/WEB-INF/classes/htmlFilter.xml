@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<item>
+		<oldStr>NestedList.aspx?listwidth=</oldStr>
+		<newStr>webpages/NestedList.aspx?listwidth=</newStr>
+	</item>
+	<item>
+		<oldStr>../</oldStr>
+		<newStr></newStr>
+	</item>
+	<item>
+		<oldStr>o:p</oldStr>
+		<newStr>div</newStr>
+	</item>
+	<item>
+		<oldStr>st1:chsdate</oldStr>
+		<newStr>div</newStr>
+	</item>
+
+	<item>
+		<oldStr>w:st</oldStr>
+		<newStr></newStr>
+	</item>
+	<item>
+		<oldStr>&lt;?xml:namespace prefix = o ns = "urn:schemas-microsoft-com:office:office" /&gt;</oldStr>
+		<newStr></newStr>
+	</item>
+	<item>
+		<oldStr>&lt;?xml:namespace prefix = st1  /&gt;</oldStr>
+		<newStr></newStr>
+	</item>
+	<item>
+		<oldStr>?xml:namespace</oldStr>
+		<newStr>div</newStr>
+	</item>
+	<item>
+		<oldStr>青岛市教育局办公室</oldStr>
+		<newStr></newStr>
+	</item>
+</root>
+
